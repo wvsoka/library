@@ -1,0 +1,6 @@
+com.lista2
+com.lista2.controllers
+com.lista2.exceptions
+com.lista2.repositories
+com.lista2.security
+com.lista2.service

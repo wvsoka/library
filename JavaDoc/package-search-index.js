@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"com.lista2"},{"l":"com.lista2.controllers"},{"l":"com.lista2.exceptions"},{"l":"com.lista2.repositories"},{"l":"com.lista2.security"},{"l":"com.lista2.service"}];updateSearchResults();
