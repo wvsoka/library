@@ -1,8 +1,10 @@
 package com.lista2.service;
 
+import com.lista2.Book;
 import com.lista2.Loan;
 import com.lista2.User;
 import com.lista2.exceptions.*;
+import com.lista2.repositories.IBookRepository;
 import com.lista2.repositories.ILoanRepository;
 import com.lista2.repositories.IUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,8 @@ import org.springframework.stereotype.Service;
 import java.sql.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 
 /**
@@ -24,11 +28,13 @@ import java.util.Optional;
 public class LoanService {
     private final ILoanRepository loanRepository;
     private final IUserRepository userRepository;
+    private final IBookRepository bookRepository;
 
     @Autowired
-    public LoanService(ILoanRepository loanRepository, IUserRepository userRepository) {
+    public LoanService(ILoanRepository loanRepository, IUserRepository userRepository, IBookRepository bookRepository) {
         this.loanRepository = loanRepository;
         this.userRepository = userRepository;
+        this.bookRepository = bookRepository;
     }
 
     /**
@@ -85,8 +91,23 @@ public class LoanService {
      *
      * @return An Iterable containing all loans.
      */
-    public Iterable<Loan> getAllLoans() {
-        return loanRepository.findAll();
+    public List<LoanDTO> getAllLoans() {
+        Iterable<Loan> loans = loanRepository.findAll();
+        return StreamSupport.stream(loans.spliterator(), false)
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    private LoanDTO convertToDTO(Loan loan) {
+        LoanDTO loanDTO = new LoanDTO();
+        loanDTO.setId(loan.getId());
+        loanDTO.setLoanStartDate(loan.getLoanStartDate());
+        loanDTO.setLoanEndDate(loan.getLoanEndDate());
+        loanDTO.setBookReturnDate(loan.getBookReturnDate());
+        loanDTO.setUserLoan(loan.getUserLoan().getId());
+        loanDTO.setBookLoan(loan.getBookLoan().getId());
+
+        return loanDTO;
     }
 
     /**
@@ -131,4 +152,43 @@ public class LoanService {
             throw new LoanDoesntExistsException("Loan not found, can't update the date.");
         }
     }
+
+    public LoanDTO convertToDto(Loan loan) {
+        LoanDTO loanDto = new LoanDTO();
+        loanDto.setId(loan.getId());
+        loanDto.setLoanStartDate(loan.getLoanStartDate());
+        loanDto.setLoanEndDate(loan.getLoanEndDate());
+        loanDto.setBookReturnDate(loan.getBookReturnDate());
+
+        UserDTO userDto = new UserDTO();
+        userDto.setId(loan.getUserLoan().getId());
+        loanDto.setUserLoan(userDto.getId());
+
+        BookDTO bookDto = new BookDTO();
+        bookDto.setId(loan.getBookLoan().getId());
+        loanDto.setBookLoan(bookDto.getId());
+
+        return loanDto;
+    }
+
+    public Loan convertToEntity(LoanDTO loanDto) {
+        Loan loan = new Loan();
+        loan.setId(loanDto.getId());
+        loan.setLoanStartDate(loanDto.getLoanStartDate());
+        loan.setLoanEndDate(loanDto.getLoanEndDate());
+        loan.setBookReturnDate(loanDto.getBookReturnDate());
+
+        User user = userRepository.findById(loanDto.getUserLoan())
+                .orElseThrow(() -> new UserDoesNotExistsExcpetion(loanDto.getUserLoan()));
+        loan.setUserLoan(user);
+
+        Book book = bookRepository.findById(loanDto.getBookLoan())
+                .orElseThrow(() -> new InvalidParametersException("Book ID is invalid"));
+        loan.setBookLoan(book);
+
+        return loan;
+    }
+
+
+
 }

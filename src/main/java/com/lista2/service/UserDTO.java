@@ -1,28 +1,18 @@
-package com.lista2;
+package com.lista2.service;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.lista2.Loan;
 import jakarta.persistence.*;
 
 import java.util.List;
 
-
-/**
- * Class representing a user (librarian or reader) in the library system.
- */
-@Entity
-public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+public class UserDTO {
     private Integer id;
     private String login;
     private String password;
     private String role;
     private String eMail;
     private String fullName;
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "userLoan", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Loan> bookLoanList;
 
     public Integer getId() {
         return id;
@@ -70,13 +60,5 @@ public class User {
 
     public void setFullName(String fullName) {
         this.fullName = fullName;
-    }
-
-    public List<Loan> getBookLoanList() {
-        return bookLoanList;
-    }
-
-    public void setBookLoanList(List<Loan> bookLoanList) {
-        this.bookLoanList = bookLoanList;
     }
 }

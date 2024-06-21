@@ -2,6 +2,7 @@ package com.lista2.controllers;
 
 import com.lista2.Loan;
 import com.lista2.exceptions.*;
+import com.lista2.service.LoanDTO;
 import com.lista2.service.LoanService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,12 +29,13 @@ public class LoanController {
     /**
      * Adds a new loan.
      *
-     * @param loan The loan to add.
+     * @param loanDTO The loan to add.
      * @return ResponseEntity indicating the result of the operation.
      */
     @PostMapping("/add")
     @PreAuthorize("hasRole('ROLE_LIBRARIAN')")
-    public ResponseEntity<String> addLoan(@RequestBody Loan loan) {
+    public ResponseEntity<String> addLoan(@RequestBody LoanDTO loanDTO) {
+        Loan loan = loanService.convertToEntity(loanDTO);
         return loanService.addLoan(loan);
     }
 
@@ -56,7 +58,7 @@ public class LoanController {
      */
     @GetMapping("/getAll")
     @PreAuthorize("hasRole('ROLE_LIBRARIAN')")
-    public @ResponseBody Iterable<Loan> getAllLoans() {
+    public @ResponseBody List<LoanDTO> getAllLoans() {
         return loanService.getAllLoans();
     }
 
