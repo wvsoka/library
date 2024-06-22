@@ -69,7 +69,8 @@ public class BookController {
      * @return Optional containing the book, or empty if not found.
      */
     @GetMapping("/getBook/{bookId}")
-    @PreAuthorize("hasAnyRole('ROLE_LIBRARIAN, ROLE_READER')")
+    @PreAuthorize("hasAnyRole('ROLE_LIBRARIAN','ROLE_READER')")
+   // @PreAuthorize("permitAll()")
     public @ResponseBody Optional<Book> getBook(@PathVariable Integer bookId) {
         return bookService.getBook(bookId);
     }

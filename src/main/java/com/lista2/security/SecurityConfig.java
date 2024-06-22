@@ -45,6 +45,7 @@ public class SecurityConfig {
                                         .requestMatchers("book/getAll").hasAnyRole("LIBRARIAN", "READER")
                                        // .requestMatchers("/book/getAll").permitAll()
                                         .requestMatchers("/book/getBook/**").hasAnyRole("LIBRARIAN", "READER")
+                                       // .requestMatchers("/book/getBook/**").permitAll()
                                         .requestMatchers("/loan/add").hasRole("LIBRARIAN")
                                         .requestMatchers("/loan/delete/**").hasRole("LIBRARIAN")
                                         .requestMatchers("/loan/getAll").hasRole("LIBRARIAN")
