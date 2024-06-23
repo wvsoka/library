@@ -116,14 +116,16 @@ public class LoanService {
      * @return A list of loans associated with the authenticated user.
      * @throws NoLoansException If the authenticated user has no loans.
      */
-    public List<Loan> getMyLoans() {
+    public List<LoanDTO> getMyLoans() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {
             String id = (String) authentication.getPrincipal();
             Optional<User> userOptional = userRepository.findById(Integer.valueOf(id));
             if (userOptional.isPresent()) {
                 User user = userOptional.get();
-                return user.getBookLoanList();
+                return user.getBookLoanList().stream()
+                        .map(this::convertToDTO)
+                        .collect(Collectors.toList());
             }
         }
         throw new NoLoansException("You have no loans.");

@@ -69,10 +69,10 @@ public class LoanController {
      */
     @GetMapping("/getMyLoans")
     @PreAuthorize("hasAnyRole('ROLE_READER')")
-    public @ResponseBody List<Loan> getMyLoans() {
+    public @ResponseBody List<LoanDTO> getMyLoans() {
         return loanService.getMyLoans();
     }
-
+    
     /**
      * Updates the return date of a book for a loan.
      *
